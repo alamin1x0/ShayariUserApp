@@ -1,15 +1,19 @@
 package com.developeralamin.loveuserapp.adapter
 
+import android.R
 import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.developeralamin.loveuserapp.databinding.ItemCategoryBinding
 import com.developeralamin.loveuserapp.model.CategoryModel
 import com.developeralamin.loveuserapp.ui.AllShayriActivity
 import com.developeralamin.loveuserapp.ui.MainActivity
+
 
 class CategoryAdapter(val mainActivity: MainActivity, val list: ArrayList<CategoryModel>) :
     RecyclerView.Adapter<CategoryAdapter.CatViewHolder>() {
@@ -29,6 +33,7 @@ class CategoryAdapter(val mainActivity: MainActivity, val list: ArrayList<Catego
             parent,
             false))
     }
+
 
     override fun onBindViewHolder(holder: CatViewHolder, position: Int) {
 
@@ -50,12 +55,19 @@ class CategoryAdapter(val mainActivity: MainActivity, val list: ArrayList<Catego
 
         holder.binding.itemText.text = list[position].name.toString()
 
+        setAnimation(holder.binding.root)
+
         holder.binding.root.setOnClickListener {
             val intent = Intent(mainActivity, AllShayriActivity::class.java)
             intent.putExtra("id", list[position].id)
             intent.putExtra("name", list[position].name)
             mainActivity.startActivity(intent)
         }
+    }
+
+    fun setAnimation(view: View) {
+        val animation: Animation = AnimationUtils.loadAnimation(mainActivity, R.anim.slide_in_left)
+        view.animation = animation
     }
 
     override fun getItemCount() = list.size

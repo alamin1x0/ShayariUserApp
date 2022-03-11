@@ -5,7 +5,10 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.developeralamin.loveuserapp.R
@@ -48,12 +51,18 @@ class AllShayriAdapter(
         }
 
         holder.binding.btnShare.setOnClickListener {
-            val share = Intent(Intent.ACTION_SEND)
-            share.type = "text/plane"
-            share.putExtra(Intent.EXTRA_TEXT, shayriList[position].data)
-            allShayriActivity.startActivity(share)
 
-            Toast.makeText(allShayriActivity, "Shayari Share Successfully", Toast.LENGTH_SHORT).show()
+            val appLink = """
+                
+               https://play.google.com/store/apps/details?id=${allShayriActivity.getPackageName()}
+                """.trimIndent()
+            val sendInt = Intent(Intent.ACTION_SEND)
+            sendInt.putExtra(Intent.EXTRA_SUBJECT, allShayriActivity.getString(R.string.app_name))
+            sendInt.putExtra(Intent.EXTRA_TEXT,
+                allShayriActivity.getString(R.string.share_app_message).toString() + appLink)
+            sendInt.type = "text/plain"
+            allShayriActivity.startActivity(Intent.createChooser(sendInt, "Share"))
+
         }
 
         holder.binding.btnCopy.setOnClickListener {
@@ -62,7 +71,8 @@ class AllShayriAdapter(
             val data = ClipData.newPlainText("text", shayriList[position].data) as ClipData
             clipboardManager.setPrimaryClip(data)
 
-            Toast.makeText(allShayriActivity, "Shayari Copied Successfully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(allShayriActivity, "Shayari Copied Successfully", Toast.LENGTH_SHORT)
+                .show()
         }
 
         holder.binding.btnWhatapps.setOnClickListener {
@@ -78,7 +88,14 @@ class AllShayriAdapter(
 
         }
 
+        setAnimation(holder.binding.root)
+
         holder.binding.itemShayri.text = shayriList[position].data.toString()
+    }
+
+    fun setAnimation(view: View) {
+        val animation: Animation = AnimationUtils.loadAnimation(allShayriActivity, android.R.anim.slide_in_left)
+        view.animation = animation
     }
 
     override fun getItemCount() = shayriList.size
